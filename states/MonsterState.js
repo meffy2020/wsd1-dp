@@ -1,9 +1,9 @@
 /**
- * MonsterState는 추상 클래스이며, handle은 하위 추상 메서드
- * AttackState, DefendState, StunnedState는 MonsterState를 상속받아 상태별 행동을 정의함.
- * Monster는 상태(state)를 필드로 가지고 있으며, 체력 변화에 따라 자동으로 상태가 전이됨.
- * 상태에 따라 서로 다른 행동(공격, 반격, 행동 불가)을 수행할 수 있다.
- * 이 구조는 객체의 내부 상태 변화에 따라 행동이 바뀌는 상황에 적합하며, State 패턴의 전형적인 구조임.
+ * MonsterState 클래스는 상태 패턴(State Pattern)에서 추상 상태 역할을 한다.
+ * - handle()은 하위 클래스에서 상태별 행동을 구현하도록 강제한다.
+ * 활용 맥락:
+ *   - 객체의 내부 상태에 따라 행동이 달라져야 할 때 사용한다.
+ *   - 예: AttackState, DefendState, StunnedState 등에서 각기 다른 행동 정의.
  */
 class MonsterState {
     constructor(monster) {

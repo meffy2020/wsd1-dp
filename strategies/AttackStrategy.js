@@ -1,11 +1,12 @@
 /**
- * AttackStrategy는 추상 클래스이며, attack 메서드는 하위 클래스에서 반드시 구현해야 한다.
- * 각 공격 클래스(FireAttack, WaterAttack 등)는 AttackStrategy를 상속받아 서로 다른 공격 알고리즘을 제공한다.
- * Monster 클래스는 attackStrategy 객체를 참조하고 있으며, 전략(algorithm)을 실행 중에 교체할 수 있도록 설계되어 있다.
- * 이 구조를 통해 알고리즘을 캡슐화하고, 새로운 공격 전략을 기존 코드 수정 없이 쉽게 추가할 수 있다.
- * 이는 OCP(개방-폐쇄 원칙)를 만족하며, 다양한 전투 상황에 유연하게 대응할 수 있는 설계를 가능하게 한다.
+ * AttackStrategy 클래스는 전략 패턴(Strategy Pattern)에서 추상 전략 역할을 한다.
+ * - attack(attacker, target): 하위 클래스에서 다양한 공격 알고리즘을 구현한다.
+ * 활용 맥락:
+ *   - 공격 방식을 동적으로 교체하거나 확장할 때 사용한다.
+ *   - 예: FireAttack, WaterAttack 등 다양한 공격 전략 적용.
  */
 class AttackStrategy {
+    // AttackStrategy 클래스는 attack() 메서드를 추상 메서드로 제공하며, 하위 클래스에서 다양한 공격 알고리즘을 구현한다.
     attack(attacker, target) {
         throw new Error("Must override attack()");
     }

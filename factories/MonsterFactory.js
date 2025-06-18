@@ -1,12 +1,16 @@
 /**
- * MonsterFactory는 몬스터 생성을 담당하는 추상 팩토리 역할을 한다.
- * 몬스터 타입에 따라 서로 다른 전략과 초기 체력을 가진 Monster 객체를 생성한다.
- * 이 구조는 객체 생성을 중앙화하여 관리하며, 새로운 몬스터 타입이 추가되어도 기존 생성 코드를 수정하지 않는다.
- * 이는 OCP(개방-폐쇄 원칙)를 만족하고, 객체 생성을 위한 일관된 인터페이스를 제공한다.
+ * MonsterFactory 클래스는 팩토리 패턴(Factory Pattern)에서 몬스터 객체 생성을 담당한다.
+ * - createMonster(type, level): 몬스터 타입과 레벨에 따라 객체를 생성한다.
+ * - getBaseStats(type): 몬스터 타입별 기본 능력치를 반환한다.
+ * - generateName(type): 몬스터의 이름을 생성한다.
+ * 활용 맥락:
+ *   - 몬스터 생성 로직을 중앙 집중화하여, 새로운 몬스터 타입 추가 시 코드 변경을 최소화한다.
+ *   - 예: 게임 내 다양한 몬스터를 일관된 방식으로 생성.
  */
 const Monster = require('../core/Monster');
 
 class MonsterFactory {
+    // MonsterFactory 클래스는 createMonster()로 몬스터 객체를 생성하며, getBaseStats()와 generateName()으로 몬스터의 기본 능력치와 이름을 설정한다.
     static createMonster(type, level = 1) {
         const baseStats = this.getBaseStats(type);
         const levelMultiplier = 1 + (level - 1) * 0.1;

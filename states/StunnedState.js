@@ -1,11 +1,20 @@
 const MonsterState = require('./MonsterState');
 const AttackState = require('./AttackState');
 
+/**
+ * StunnedState 클래스는 상태 패턴(State Pattern)에서 기절 상태를 정의한다.
+ * - handle()로 기절 상태에서의 행동을 구현한다.
+ * 활용 맥락:
+ *   - 몬스터가 행동 불능 상태일 때 사용한다.
+ *   - 예: 공격, 방어 등 모든 행동 불가.
+ */
 class StunnedState extends MonsterState {
     constructor(monster) {
         super(monster);
         this.turnsLeft = 2;
     }
+
+    // StunnedState 클래스는 handle() 메서드로 기절 상태에서의 행동을 정의한다.
 
     attack(target) {
         this.monster.notifyObservers(`${this.monster.name} is stunned and cannot attack!`);
