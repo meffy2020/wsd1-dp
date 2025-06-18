@@ -1,0 +1,94 @@
+@startuml Pokemon Game Architecture
+
+' Core Classes
+class Player {
+  -name: String
+  -monsters: Monster[]
+  +constructor(name: String)
+  +addMonster(monster: Monster): void
+  +getMonsters(): Monster[]
+}
+
+class Monster {
+  -name: String
+  -hp: Number
+  -state: MonsterState
+  -attackStrategy: AttackStrategy
+  +constructor(name: String, hp: Number)
+  +attack(target: Monster): void
+  +defend(): void
+  +setState(state: MonsterState): void
+  +setAttackStrategy(strategy: AttackStrategy): void
+}
+
+class BattleContext {
+  -player1: Player
+  -player2: Player
+  -currentTurn: Number
+  +constructor(player1: Player, player2: Player)
+  +startBattle(): void
+  +executeTurn(): void
+}
+
+' State Pattern
+interface MonsterState {
+  +attack(monster: Monster, target: Monster): void
+  +defend(monster: Monster): void
+}
+
+class NormalState {
+  +attack(monster: Monster, target: Monster): void
+  +defend(monster: Monster): void
+}
+
+class StunnedState {
+  +attack(monster: Monster, target: Monster): void
+  +defend(monster: Monster): void
+}
+
+class AttackState {
+  +attack(monster: Monster, target: Monster): void
+  +defend(monster: Monster): void
+}
+
+class DefendState {
+  +attack(monster: Monster, target: Monster): void
+  +defend(monster: Monster): void
+}
+
+' Strategy Pattern
+interface AttackStrategy {
+  +execute(attacker: Monster, target: Monster): void
+}
+
+class NormalAttack {
+  +execute(attacker: Monster, target: Monster): void
+}
+
+class FireAttack {
+  +execute(attacker: Monster, target: Monster): void
+}
+
+class WaterAttack {
+  +execute(attacker: Monster, target: Monster): void
+}
+
+class GrassAttack {
+  +execute(attacker: Monster, target: Monster): void
+}
+
+' Relationships
+Player "1" *-- "many" Monster
+Monster o-- MonsterState
+Monster o-- AttackStrategy
+MonsterState <|.. NormalState
+MonsterState <|.. StunnedState
+MonsterState <|.. AttackState
+MonsterState <|.. DefendState
+AttackStrategy <|.. NormalAttack
+AttackStrategy <|.. FireAttack
+AttackStrategy <|.. WaterAttack
+AttackStrategy <|.. GrassAttack
+BattleContext o-- Player
+
+@enduml 
