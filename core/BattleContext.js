@@ -51,6 +51,9 @@ class BattleContext {
     }
 
     nextTurn() {
+        if (this.checkBattleEnd()) {
+            throw new Error('BattleContext.nextTurn: 이미 전투가 종료되었습니다.');
+        }
         this.turnCount++;
         this.notifyObservers(`\n${this.turnCount}번째 턴이 종료되었습니다.`);
         if (this.checkBattleEnd()) {
@@ -94,14 +97,17 @@ class BattleContext {
      * isPlayer=true면 player, false면 enemy가 명령을 실행한다.
      */
     executeCommand(command, isPlayer = true) {
+        if (!command) throw new Error('BattleContext.executeCommand: command는 null/undefined일 수 없습니다.');
         if (isPlayer) {
-            if (this.player.activeMonster && this.enemy.activeMonster) {
-                command.execute(this.player.activeMonster, this.enemy.activeMonster);
+            if (!this.player.activeMonster || !this.enemy.activeMonster) {
+                throw new Error('BattleContext.executeCommand: 활성화된 몬스터가 없습니다.');
             }
+            command.execute(this.player.activeMonster, this.enemy.activeMonster);
         } else {
-            if (this.enemy.activeMonster && this.player.activeMonster) {
-                command.execute(this.enemy.activeMonster, this.player.activeMonster);
+            if (!this.enemy.activeMonster || !this.player.activeMonster) {
+                throw new Error('BattleContext.executeCommand: 활성화된 몬스터가 없습니다.');
             }
+            command.execute(this.enemy.activeMonster, this.player.activeMonster);
         }
     }
 }

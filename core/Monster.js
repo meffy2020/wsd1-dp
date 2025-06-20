@@ -27,6 +27,9 @@ class Monster {
     // setState()로 상태를 변경하며, attack()으로 현재 전략에 따라 공격을 수행한다.
 
     takeDamage(damage) {
+        if (typeof damage !== 'number' || isNaN(damage) || damage < 0) {
+            throw new Error('Monster.takeDamage: damage는 0 이상의 숫자여야 합니다.');
+        }
         const actualDamage = Math.max(1, damage - this.defense);
         this.hp = Math.max(0, this.hp - actualDamage);
         this.notifyObservers(`${this.name}이(가) ${actualDamage}의 피해를 입었습니다!`);
@@ -34,6 +37,9 @@ class Monster {
     }
 
     heal(amount) {
+        if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+            throw new Error('Monster.heal: amount는 0보다 큰 숫자여야 합니다.');
+        }
         const actualHeal = Math.min(this.maxHp - this.hp, amount);
         this.hp += actualHeal;
         this.notifyObservers(`${this.name}이(가) ${actualHeal}만큼 회복했습니다!`);
@@ -45,6 +51,7 @@ class Monster {
     }
 
     setState(state) {
+        if (!state) throw new Error('Monster.setState: state는 null/undefined일 수 없습니다.');
         this.state = state;
         this.notifyObservers(`${this.name}의 상태가 ${state.constructor.name}로 변경되었습니다!`);
     }
@@ -60,6 +67,11 @@ class Monster {
 
     notifyObservers(message) {
         this.observers.forEach(observer => observer.update(message));
+    }
+
+    setStrategy(strategy) {
+        if (!strategy) throw new Error('Monster.setStrategy: strategy는 null/undefined일 수 없습니다.');
+        this.attackStrategy = strategy;
     }
 }
 

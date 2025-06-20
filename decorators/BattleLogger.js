@@ -5,10 +5,14 @@
  *   - 전투 상황을 기록하거나, 로그 출력을 확장할 때 사용한다.
  *   - 예: EmphasizedLogger로 로그를 강조하여 출력.
  */
+const fs = require('fs');
+const path = require('path');
+
 class BattleLogger {
-    constructor(battleContext) {
-        this.battleContext = battleContext;
-        this.logs = [];
+    constructor(filename = 'battle.log') {
+        this.filename = path.resolve(__dirname, '..', 'logs', filename);
+        // 로그 파일 초기화
+        fs.writeFileSync(this.filename, '', 'utf8');
     }
 
     update(message) {
@@ -17,25 +21,16 @@ class BattleLogger {
 
     logBattleEvent(event) {
         const timestamp = new Date().toISOString();
-        const logEntry = {
-            timestamp,
-            event,
-            turn: this.battleContext ? this.battleContext.turnCount : null
-        };
-        this.logs.push(logEntry);
-        return logEntry;
+        const logEntry = `[${timestamp}] ${event}\n`;
+        fs.appendFileSync(this.filename, logEntry, 'utf8');
     }
 
     getBattleLogs() {
-        return this.logs;
-    }
-
-    getLogsByTurn(turn) {
-        return this.logs.filter(log => log.turn === turn);
+        return fs.readFileSync(this.filename, 'utf8');
     }
 
     clearLogs() {
-        this.logs = [];
+        fs.writeFileSync(this.filename, '', 'utf8');
     }
 }
 

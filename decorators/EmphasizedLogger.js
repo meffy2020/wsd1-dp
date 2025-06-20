@@ -7,13 +7,13 @@
  */
 // EmphasizedLogger 클래스는 log() 메서드로 강조된 전투 로그를 출력한다.
 class EmphasizedLogger {
-    constructor(logger) {
-        this.logger = logger; // logger는 Observer 인터페이스를 구현해야 함
+    constructor(observer) {
+        this.observer = observer; // observer는 Observer 인터페이스를 구현해야 함
     }
 
     update(message) {
         const emphasizedMessage = this.emphasizeMessage(message);
-        this.logger.update(emphasizedMessage);
+        this.observer.update(emphasizedMessage);
     }
 
     emphasizeMessage(message) {

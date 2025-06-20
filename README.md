@@ -1,8 +1,30 @@
 # PokeRougue
 
-객체지향 프로그래밍과 디자인 패턴을 학습하기 위한 포켓몬 로그라이크 게임 프로젝트입니다.
+**포켓몬 배틀을 객체지향적으로 구현한 콘솔 게임!**
 
-## 프로젝트 구조
+- 다양한 디자인 패턴(State, Strategy, Command, Observer, Decorator, Factory, Template) 적용
+- 확장성과 유지보수성이 뛰어난 구조
+
+---
+
+## 🏃‍♂️ 실행 방법
+
+```bash
+npm install
+node main.js
+```
+
+---
+
+## 🧪 테스트 실행
+
+```bash
+npm test
+```
+
+---
+
+## 📦 프로젝트 구조
 
 ```
 PokeRougue/
@@ -20,7 +42,6 @@ PokeRougue/
 │   └── MonsterFactory.js
 ├── observer/          # 옵저버 패턴
 │   ├── ConsoleLogger.js
-│   ├── Player.js
 │   └── Subject.js
 ├── states/           # 상태 패턴
 │   ├── AttackState.js
@@ -36,62 +57,100 @@ PokeRougue/
 ├── logs/            # 로그 관련
 │   ├── BattleLogTemplate.js
 │   └── SimpleBattleLog.js
+├── test/            # 단위 테스트
+│   └── monster.test.js
 ├── main.js          # 메인 실행 파일
 └── package.json     # 프로젝트 설정
 ```
 
-## 사용된 디자인 패턴
+---
 
-1. **전략 패턴 (Strategy Pattern)**
+## 🗺️ 클래스 다이어그램
 
-   - 공격 방식을 캡슐화하여 교체 가능하게 함
-   - 예: `FireAttack`, `WaterAttack` 등
-
-2. **상태 패턴 (State Pattern)**
-
-   - 몬스터의 상태에 따른 행동을 캡슐화
-   - 예: `AttackState`, `DefendState`, `StunnedState`
-
-3. **옵저버 패턴 (Observer Pattern)**
-
-   - 전투 로그 출력, 상태 변화 알림
-   - 예: `ConsoleLogger`, `EmphasizedLogger`
-
-4. **데코레이터 패턴 (Decorator Pattern)**
-
-   - 로그 출력 기능을 동적으로 확장
-   - 예: `EmphasizedLogger`
-
-5. **팩토리 패턴 (Factory Pattern)**
-   - 몬스터 생성 로직을 캡슐화
-   - 예: `MonsterFactory`
-
-## 실행 방법
-
-```bash
-# 의존성 설치
-npm install
-
-# 게임 실행
-npm start
+```mermaid
+classDiagram
+    class Player {
+        - name: String
+        - monsters: Monster[]
+        + addMonster(monster: Monster)
+        + removeMonster(monster: Monster)
+        + setActiveMonster(monster: Monster)
+        + update(message)
+    }
+    class Monster {
+        - name: String
+        - type: String
+        - hp: Number
+        - attack: Number
+        - defense: Number
+        - state: MonsterState
+        - attackStrategy: AttackStrategy
+        + setState(state: MonsterState)
+        + setStrategy(strategy: AttackStrategy)
+        + takeDamage(damage)
+        + heal(amount)
+        + addObserver(observer)
+        + removeObserver(observer)
+        + notifyObservers(message)
+    }
+    ... (생략, 전체 구조는 코드 참고)
 ```
 
-## 학습 목표
+---
 
-- 객체지향 프로그래밍의 4가지 특징 이해
+## 🧩 사용된 디자인 패턴 & 실제 예시
 
-  - 캡슐화 (Encapsulation)
-  - 상속 (Inheritance)
-  - 다형성 (Polymorphism)
-  - 추상화 (Abstraction)
+- **State Pattern**  
+  몬스터의 상태(공격/방어/기절)에 따라 행동이 달라짐  
+  → `AttackState`, `DefendState`, `StunnedState`
 
-- SOLID 원칙 적용
-  - 단일 책임 원칙 (SRP)
-  - 개방-폐쇄 원칙 (OCP)
-  - 리스코프 치환 원칙 (LSP)
-  - 인터페이스 분리 원칙 (ISP)
-  - 의존성 역전 원칙 (DIP)
+- **Strategy Pattern**  
+  몬스터의 공격 방식(불, 물, 풀, 일반 등)을 동적으로 교체  
+  → `FireAttack`, `WaterAttack`, `NormalAttack` 등
 
-## 라이선스
+- **Command Pattern**  
+  플레이어의 명령(공격 등)을 객체로 캡슐화  
+  → `AttackCommand`
+
+- **Observer/Decorator Pattern**  
+  전투 로그를 콘솔/파일/강조 등 다양한 방식으로 동시에 기록  
+  → `ConsoleLogger`, `BattleLogger`, `EmphasizedLogger`
+
+- **Factory Pattern**  
+  몬스터 생성 로직을 일원화  
+  → `MonsterFactory`
+
+- **Template Pattern**  
+  전투 로그 출력의 공통 흐름을 정의  
+  → `BattleLogTemplate`, `SimpleBattleLog`
+
+---
+
+## 💡 확장성/유지보수성
+
+- 새로운 공격 전략, 몬스터 상태, 명령, 로그 방식 등  
+  각 패턴의 인터페이스/추상 클래스만 상속하면 손쉽게 추가 가능
+- 각 역할이 명확히 분리되어 있어 코드 수정이 용이
+
+---
+
+## 📝 실행 예시
+
+```
+=== 1턴 ===
+파이리이(가) 꼬부기에게 20의 피해를 입혔습니다.
+...
+🎉 Ash이(가) 승리했습니다! 🎉
+```
+
+---
+
+## 🧪 테스트
+
+- `test/monster.test.js`에서 몬스터의 공격, 상태 전이, 전략 변경 등 단위 테스트 제공
+
+---
+
+## 📜 라이선스
 
 MIT License

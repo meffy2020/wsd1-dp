@@ -22,30 +22,34 @@ class Player extends Subject {
 
     // Player 클래스는 addMonster()로 팀에 몬스터를 추가하고, removeMonster()로 제거할 수 있다.
     addMonster(monster) {
+        if (!monster) throw new Error('Player.addMonster: monster는 null/undefined일 수 없습니다.');
+        if (this.monsters.includes(monster)) throw new Error('Player.addMonster: 이미 팀에 있는 몬스터입니다.');
         this.monsters.push(monster);
         monster.addObserver(this);
         this.notifyObservers(`${monster.name}이(가) 당신의 팀에 합류했습니다!`);
     }
 
     removeMonster(monster) {
+        if (!monster) throw new Error('Player.removeMonster: monster는 null/undefined일 수 없습니다.');
+        if (!this.monsters.includes(monster)) throw new Error('Player.removeMonster: 팀에 없는 몬스터입니다.');
         this.monsters = this.monsters.filter(m => m !== monster);
         monster.removeObserver(this);
         this.notifyObservers(`${monster.name}이(가) 팀을 떠났습니다!`);
     }
 
     setActiveMonster(monster) {
-        if (this.monsters.includes(monster)) {
-            this.activeMonster = monster;
-            this.notifyObservers(`${monster.name}이(가) 현재 활성화된 몬스터가 되었습니다!`);
-        }
+        if (!monster) throw new Error('Player.setActiveMonster: monster는 null/undefined일 수 없습니다.');
+        if (!this.monsters.includes(monster)) throw new Error('Player.setActiveMonster: 팀에 없는 몬스터입니다.');
+        this.activeMonster = monster;
+        this.notifyObservers(`${monster.name}이(가) 현재 활성화된 몬스터가 되었습니다!`);
     }
 
     switchMonster(monster) {
-        if (this.monsters.includes(monster) && monster.isAlive()) {
-            this.setActiveMonster(monster);
-            return true;
-        }
-        return false;
+        if (!monster) throw new Error('Player.switchMonster: monster는 null/undefined일 수 없습니다.');
+        if (!this.monsters.includes(monster)) throw new Error('Player.switchMonster: 팀에 없는 몬스터입니다.');
+        if (!monster.isAlive()) throw new Error('Player.switchMonster: 이미 기절한 몬스터입니다.');
+        this.setActiveMonster(monster);
+        return true;
     }
 
     // Observer pattern implementation

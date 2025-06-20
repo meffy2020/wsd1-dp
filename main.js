@@ -1,5 +1,5 @@
 const MonsterFactory = require('./factories/MonsterFactory');
-const Player = require('./observer/Player');
+const Player = require('./core/Player');
 const BattleContext = require('./core/BattleContext');
 const ConsoleLogger = require('./observer/ConsoleLogger');
 const EmphasizedLogger = require('./decorators/EmphasizedLogger');
@@ -12,6 +12,7 @@ const AttackState = require('./states/AttackState');
 const DefendState = require('./states/DefendState');
 const StunnedState = require('./states/StunnedState');
 const BattleLogger = require('./decorators/BattleLogger');
+const SimpleBattleLog = require('./logs/SimpleBattleLog');
 
 // 플레이어 및 몬스터 생성
 const player1 = new Player('Ash');
@@ -29,20 +30,21 @@ player2.addMonster(normalMon);
 player1.setActiveMonster(fireMon);
 player2.setActiveMonster(waterMon);
 
-// 옵저버/로거 등록
-const consoleLogger = new ConsoleLogger();
-const battleLogger = new BattleLogger(battle);
-const emphasizedLogger = new EmphasizedLogger(battleLogger);
-fireMon.addObserver(emphasizedLogger);
-waterMon.addObserver(emphasizedLogger);
-player1.update = consoleLogger.update.bind(consoleLogger);
-player2.update = consoleLogger.update.bind(consoleLogger);
-battle.addObserver(emphasizedLogger);
-battle.addObserver(consoleLogger);
-
 // 전투 컨텍스트 생성
 const battle = new BattleContext(player1, player2);
-battle.addObserver(emphasizedLogger);
+
+// 옵저버/로거 등록 (체인 구조)
+const consoleLogger = new ConsoleLogger();
+const battleLogger = new BattleLogger();
+const fullLoggerChain = new EmphasizedLogger(battleLogger);
+const fullConsoleChain = new EmphasizedLogger(consoleLogger);
+
+fireMon.addObserver(fullLoggerChain);
+waterMon.addObserver(fullLoggerChain);
+battle.addObserver(fullLoggerChain);
+battle.addObserver(fullConsoleChain);
+player1.update = fullConsoleChain.update.bind(fullConsoleChain);
+player2.update = fullConsoleChain.update.bind(fullConsoleChain);
 
 // 전투 시작
 battle.startBattle();
@@ -53,6 +55,9 @@ let cmd1 = new AttackCommand(new FireAttack());
 let cmd2 = new AttackCommand(new WaterAttack());
 player1.activeMonster.setState(new AttackState(player1.activeMonster));
 player2.activeMonster.setState(new AttackState(player2.activeMonster));
+const simpleBattleLog = new SimpleBattleLog();
+simpleBattleLog.execute(player1.activeMonster, player2.activeMonster, new FireAttack());
+simpleBattleLog.execute(player2.activeMonster, player1.activeMonster, new WaterAttack());
 battle.executeCommand(cmd1, true);
 battle.executeCommand(cmd2, false);
 battle.nextTurn();
@@ -63,6 +68,8 @@ cmd1 = new AttackCommand(new GrassAttack());
 cmd2 = new AttackCommand(new NormalAttack());
 player1.activeMonster.setState(new AttackState(player1.activeMonster));
 player2.activeMonster.setState(new DefendState(player2.activeMonster));
+simpleBattleLog.execute(player1.activeMonster, player2.activeMonster, new GrassAttack());
+simpleBattleLog.execute(player2.activeMonster, player1.activeMonster, new NormalAttack());
 battle.executeCommand(cmd1, true);
 battle.executeCommand(cmd2, false);
 battle.nextTurn();
@@ -71,6 +78,7 @@ battle.nextTurn();
 console.log('\n=== 3턴 ===');
 cmd1 = new AttackCommand(new NormalAttack());
 player2.activeMonster.setState(new StunnedState(player2.activeMonster));
+simpleBattleLog.execute(player1.activeMonster, player2.activeMonster, new NormalAttack());
 battle.executeCommand(cmd1, true);
 battle.nextTurn();
 
@@ -78,5 +86,5 @@ battle.nextTurn();
 console.log('\n=== 전투 결과 ===');
 console.log(`플레이어1의 ${player1.activeMonster.name}: ${player1.activeMonster.hp}/${player1.activeMonster.maxHp} HP`);
 console.log(`플레이어2의 ${player2.activeMonster.name}: ${player2.activeMonster.hp}/${player2.activeMonster.maxHp} HP`);
-console.log('\n=== 전투 로그(파일/메모리) ===');
-console.log(battleLogger.getBattleLogs().map(log => `[${log.timestamp}] ${log.event}`).join('\n'));
+console.log('\n=== 전투 로그(파일) ===');
+console.log(battleLogger.getBattleLogs());

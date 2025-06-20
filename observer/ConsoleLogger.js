@@ -6,20 +6,8 @@
  *   - 예: BattleContext에서 전투 로그를 받아 콘솔에 출력.
  */
 class ConsoleLogger {
-    constructor() {
-        this.logs = [];
-    }
-
     update(message) {
         console.log(message);
-    }
-
-    getLogs() {
-        return this.logs;
-    }
-
-    clearLogs() {
-        this.logs = [];
     }
 }
 
