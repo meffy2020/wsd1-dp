@@ -11,12 +11,16 @@ class BattleLogger {
         this.logs = [];
     }
 
+    update(message) {
+        this.logBattleEvent(message);
+    }
+
     logBattleEvent(event) {
         const timestamp = new Date().toISOString();
         const logEntry = {
             timestamp,
             event,
-            turn: this.battleContext.turnCount
+            turn: this.battleContext ? this.battleContext.turnCount : null
         };
         this.logs.push(logEntry);
         return logEntry;

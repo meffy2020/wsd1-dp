@@ -8,7 +8,7 @@
 // EmphasizedLogger 클래스는 log() 메서드로 강조된 전투 로그를 출력한다.
 class EmphasizedLogger {
     constructor(logger) {
-        this.logger = logger;
+        this.logger = logger; // logger는 Observer 인터페이스를 구현해야 함
     }
 
     update(message) {
@@ -17,21 +17,16 @@ class EmphasizedLogger {
     }
 
     emphasizeMessage(message) {
-        // Add emphasis to important battle events
-        if (message.includes("won the battle")) {
+        if (message.includes("won the battle") || message.includes("승리")) {
             return `🎉 ${message} 🎉`;
-        } else if (message.includes("took") && message.includes("damage")) {
+        } else if (message.includes("피해") || message.includes("damage")) {
             return `💥 ${message} 💥`;
-        } else if (message.includes("healed")) {
+        } else if (message.includes("회복") || message.includes("healed")) {
             return `💚 ${message} 💚`;
-        } else if (message.includes("is now in")) {
+        } else if (message.includes("상태") || message.includes("is now in")) {
             return `✨ ${message} ✨`;
         }
         return message;
-    }
-
-    log(message) {
-        console.log(`💥 ${message} 💥`);
     }
 }
 

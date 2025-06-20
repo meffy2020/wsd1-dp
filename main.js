@@ -11,6 +11,7 @@ const NormalAttack = require('./strategies/NormalAttack');
 const AttackState = require('./states/AttackState');
 const DefendState = require('./states/DefendState');
 const StunnedState = require('./states/StunnedState');
+const BattleLogger = require('./decorators/BattleLogger');
 
 // 플레이어 및 몬스터 생성
 const player1 = new Player('Ash');
@@ -30,11 +31,14 @@ player2.setActiveMonster(waterMon);
 
 // 옵저버/로거 등록
 const consoleLogger = new ConsoleLogger();
-const emphasizedLogger = new EmphasizedLogger(consoleLogger);
+const battleLogger = new BattleLogger(battle);
+const emphasizedLogger = new EmphasizedLogger(battleLogger);
 fireMon.addObserver(emphasizedLogger);
 waterMon.addObserver(emphasizedLogger);
 player1.update = consoleLogger.update.bind(consoleLogger);
 player2.update = consoleLogger.update.bind(consoleLogger);
+battle.addObserver(emphasizedLogger);
+battle.addObserver(consoleLogger);
 
 // 전투 컨텍스트 생성
 const battle = new BattleContext(player1, player2);
@@ -74,3 +78,5 @@ battle.nextTurn();
 console.log('\n=== 전투 결과 ===');
 console.log(`플레이어1의 ${player1.activeMonster.name}: ${player1.activeMonster.hp}/${player1.activeMonster.maxHp} HP`);
 console.log(`플레이어2의 ${player2.activeMonster.name}: ${player2.activeMonster.hp}/${player2.activeMonster.maxHp} HP`);
+console.log('\n=== 전투 로그(파일/메모리) ===');
+console.log(battleLogger.getBattleLogs().map(log => `[${log.timestamp}] ${log.event}`).join('\n'));
